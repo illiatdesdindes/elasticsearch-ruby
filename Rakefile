@@ -80,7 +80,7 @@ namespace :elasticsearch do
     Rake::Task['elasticsearch:status'].invoke
     puts '-'*80
 
-    gitref = args[:branch] || 'origin/master'
+    gitref = args[:branch] || 'origin/5.x'
     es_version = gitref.gsub(/^v|origin\/(\d\.+)/, '\1').to_f
 
     current_branch = `git --git-dir=#{__current__.join('tmp/elasticsearch/.git')} --work-tree=#{__current__.join('tmp/elasticsearch')} branch --no-color`.split("\n").select { |b| b =~ /^\*/ }.first.gsub(/^\*\s*/, '')

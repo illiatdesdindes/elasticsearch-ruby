@@ -1,0 +1,38 @@
+version: '2'
+services:
+  elasticsearch1:
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.3.2
+    container_name: elasticsearch1
+    environment:
+      - cluster.name=docker-cluster
+
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - esdata1:/usr/share/elasticsearch/data
+    ports:
+      - 9250:9200
+    networks:
+      - esnet
+  elasticsearch2:
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.3.2
+    environment:
+      - cluster.name=docker-cluster
+      - "discovery.zen.ping.unicast.hosts=elasticsearch1"
+
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - esdata2:/usr/share/elasticsearch/data
+    networks:
+      - esnet
+
+volumes:
+  esdata1:
+    driver: local
+  esdata2:
+    driver: local
+
+networks:
+  esnet:
+    driver: bridge

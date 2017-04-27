@@ -7,6 +7,7 @@ end
 
 at_exit { Elasticsearch::Test::IntegrationTestCase.__run_at_exit_hooks }
 
+require 'byebug'
 require 'minitest/autorun'
 require 'shoulda-context'
 require 'mocha/setup'
