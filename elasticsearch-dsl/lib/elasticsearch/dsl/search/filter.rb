@@ -13,6 +13,7 @@ module Elasticsearch
       class Filter
         def initialize(*args, &block)
           @block = block
+          @value = []
         end
 
         # Looks up the corresponding class for a method being invoked, and initializes it
@@ -21,8 +22,8 @@ module Elasticsearch
         #
         def method_missing(name, *args, &block)
           klass = Utils.__camelize(name)
-          if Filters.const_defined? klass
-            @value = Filters.const_get(klass).new *args, &block
+          if Filters.const_defined?(klass)
+            @value << Filters.const_get(klass).new(*args, &block)
           else
             raise NoMethodError, "undefined method '#{name}' for #{self}"
           end
@@ -43,8 +44,10 @@ module Elasticsearch
         #
         def to_hash(options={})
           call
-          if @value
-            @value.to_hash
+          if @value && @value.size > 1
+            @value.map { |i| i.to_hash }
+          elsif @value && @value.size == 1
+            @value.first.to_hash
           else
             {}
           end

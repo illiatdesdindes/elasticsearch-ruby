@@ -95,6 +95,32 @@ module Elasticsearch
                           subject.to_hash )
           end
 
+          should "take a block with multiple conditions in one clause" do
+            subject = Bool.new do
+              must do
+                match foo: 'bar'
+                match moo: 'bam'
+              end
+
+              filter do
+                term xoo: 'bax'
+                term zoo: 'baz'
+              end
+
+            end
+
+            # Make sure we're not additive
+            subject.to_hash
+            subject.to_hash
+
+            assert_equal( { bool:
+                            { must:     [ {match: { foo: 'bar' }}, {match: { moo: 'bam' }} ],
+                              filter:   [ {term: { xoo: 'bax' }}, {term: { zoo: 'baz' }} ]
+                            }
+                          },
+                          subject.to_hash )
+          end
+
           should "take method calls" do
             subject = Bool.new
 

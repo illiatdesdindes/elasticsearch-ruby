@@ -67,6 +67,14 @@ module Elasticsearch
             self
           end
 
+          def call
+            @hash[name].delete(:must)
+            @hash[name].delete(:must_not)
+            @hash[name].delete(:should)
+            @hash[name].delete(:filter)
+            super
+          end
+
           def to_hash
             @hash[name].update(@args.to_hash) if @args.respond_to?(:to_hash)
 
